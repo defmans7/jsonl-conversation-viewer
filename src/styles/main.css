@@ -509,13 +509,29 @@ pre.result-body{
 
 /* ---------- responsive ---------- */
 @media (max-width: 860px){
-  .app-body{flex-direction:column;overflow-y:auto;}
-  .history-drawer.open{width:100%;max-height:35vh;border-right:none;border-bottom:1px solid var(--border);}
-  .panes{flex-direction:column;overflow-y:auto;}
+  body{overflow:auto;height:auto;display:block;}
+  .app-body{flex:none;overflow:visible;display:block;}
+  .panes{flex:none;overflow:visible;display:block;flex-direction:column;}
+  .history-drawer:not(.open){display:none;}
+  .history-drawer.open{display:flex;width:100%;max-height:35vh;border-right:none;border-bottom:1px solid var(--border);}
   .pane-input, .pane-output{width:100%;}
-  .pane-input{height:38vh;border-right:none;border-bottom:1px solid var(--border);transition:height .18s ease;}
-  .pane-output{flex:1;}
+  .pane-input{height:30vh;border-right:none;border-bottom:1px solid var(--border);transition:height .18s ease;}
+  .pane-output{overflow:visible;}
   .topbar .track-legend{display:none;}
+
+  /* Topbar: wrap to two rows — row1 = title+buttons, row2 = stats */
+  .topbar{padding:5px 10px 0;gap:6px;flex-wrap:wrap;row-gap:0;}
+  .topbar h1{font-size:12px;}
+  .clear-btn{margin-left:auto;font-size:10px;padding:4px 8px;}
+  .download-btn,.history-toggle{width:26px;height:26px;}
+
+  /* Stats: full-width strip below */
+  .stats{
+    order:99;width:100%;flex-basis:100%;margin-left:0;
+    padding:4px 0 5px;
+    border-top:1px solid var(--border);
+    gap:8px;font-size:10px;
+  }
 
   .pane-input.collapsed{height:44px;width:100%;}
   .pane-input.collapsed .pane-input-header{

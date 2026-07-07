@@ -8,9 +8,16 @@ const PORT = process.env.PORT || 3000;
 
 Bun.serve({
   port: PORT,
-  async fetch(req) {
+  async fetch(req, server) {
     const url = new URL(req.url);
     let path = url.pathname === '/' ? '/index.html' : url.pathname;
+
+    // Upgrade livereload WebSocket
+    if (path === '/__livereload') {
+      server.upgrade(req);
+      return;
+    }
+
     const filePath = `./src${path}`;
 
     const file = Bun.file(filePath);
