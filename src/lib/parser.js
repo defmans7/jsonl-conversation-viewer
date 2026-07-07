@@ -12,6 +12,8 @@ export function parseJsonl(text) {
   lines.forEach((raw, idx) => {
     const line = raw.trim();
     if (!line) return;
+    // Skip comment lines (// or #)
+    if (line.startsWith('//') || line.startsWith('#')) return;
     try {
       objs.push({ ok: true, obj: JSON.parse(line), lineNo: idx + 1 });
     } catch (e) {
@@ -23,7 +25,10 @@ export function parseJsonl(text) {
 }
 
 /** Sample data pre-loaded in the viewer for demonstration. */
-export const SAMPLE = `{"type":"message","id":"a1b2c3d4","parentId":"root","timestamp":"2026-07-07T10:15:00.000Z","message":{"role":"user","content":[{"type":"text","text":"I need to refactor the authentication module in @myapp/services/auth/ — it's getting unwieldy."}],"timestamp":1751883300000}}
+export const SAMPLE = `// Lines starting with // or # are comments — they are visible here but won't render.
+// Paste your own JSONL below to replace this sample.
+
+{"type":"message","id":"a1b2c3d4","parentId":"root","timestamp":"2026-07-07T10:15:00.000Z","message":{"role":"user","content":[{"type":"text","text":"I need to refactor the authentication module in @myapp/services/auth/ — it's getting unwieldy."}],"timestamp":1751883300000}}
 {"type":"message","id":"e5f6g7h8","parentId":"a1b2c3d4","timestamp":"2026-07-07T10:15:04.500Z","message":{"role":"assistant","content":[{"type":"thinking","thinking":"The user wants to refactor an auth module. Let me explore the directory structure first to understand the scope of the work and identify which files need attention.","thinkingSignature":"reasoning_content"},{"type":"text","text":"Let me take a look at the auth module structure before we dive in."},{"type":"toolCall","id":"call_00_ABC123","name":"bash","arguments":{"command":"find ~/projects/myapp/src/services/auth -type f | head -40"}},{"type":"toolCall","id":"call_01_DEF456","name":"bash","arguments":{"command":"wc -l ~/projects/myapp/src/services/auth/*.ts"}}],"api":"openai-completions","provider":"anthropic","model":"claude-sonnet-4-20250514","usage":{"input":2847,"output":156,"cacheRead":2800,"cacheWrite":0,"totalTokens":5803,"cost":{"input":0.008541,"output":0.001248,"cacheRead":0.0014,"cacheWrite":0,"total":0.011189}},"stopReason":"toolUse","timestamp":1751883304500,"responseId":"msg_01abc123def456"}}
 {"type":"message","id":"i9j0k1l2","parentId":"e5f6g7h8","timestamp":"2026-07-07T10:15:04.510Z","message":{"role":"toolResult","toolCallId":"call_00_ABC123","toolName":"bash","content":[{"type":"text","text":"~/projects/myapp/src/services/auth/AuthService.ts\\n~/projects/myapp/src/services/auth/TokenManager.ts\\n~/projects/myapp/src/services/auth/OAuthProvider.ts\\n~/projects/myapp/src/services/auth/SessionStore.ts\\n~/projects/myapp/src/services/auth/index.ts\\n~/projects/myapp/src/services/auth/__tests__/AuthService.test.ts\\n"}],"isError":false,"timestamp":1751883304510}}
 {"type":"message","id":"m3n4o5p6","parentId":"i9j0k1l2","timestamp":"2026-07-07T10:15:04.515Z","message":{"role":"toolResult","toolCallId":"call_01_DEF456","toolName":"bash","content":[{"type":"text","text":"  412 ~/projects/myapp/src/services/auth/AuthService.ts\\n  198 ~/projects/myapp/src/services/auth/TokenManager.ts\\n   87 ~/projects/myapp/src/services/auth/OAuthProvider.ts\\n   64 ~/projects/myapp/src/services/auth/SessionStore.ts\\n   12 ~/projects/myapp/src/services/auth/index.ts\\n  773 total"}],"isError":false,"timestamp":1751883304515}}

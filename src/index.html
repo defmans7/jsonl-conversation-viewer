@@ -42,7 +42,7 @@
       <div class="pane-label">Paste JSONL</div>
       <button class="fold-btn" id="foldBtn" aria-expanded="true" aria-controls="input" title="Collapse input pane">‹</button>
     </div>
-    <textarea id="input" spellcheck="false" placeholder="Paste JSONL lines here — one JSON object per line. New lines pasted anywhere will re-render the conversation on the right."></textarea>
+    <textarea id="input" spellcheck="false" placeholder="Paste JSONL lines here — one JSON object per line. Lines starting with // or # are treated as comments and won't render."></textarea>
   </div>
   <div class="pane pane-output" id="output"></div>
 </div>
