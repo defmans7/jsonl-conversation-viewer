@@ -2,7 +2,7 @@
 
 A dark-themed, single-page browser app for viewing **JSONL conversation logs** — traces from AI coding agents with user messages, assistant replies, tool calls, tool results, and thinking blocks.
 
-![screenshot]()
+![screenshot](screenshot.png)
 
 ## Features
 
