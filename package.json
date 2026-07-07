@@ -1,0 +1,11 @@
+{
+  "name": "jsonl-conversation-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A browser-based viewer for JSONL conversation logs (AI assistant traces with tool calls and results).",
+  "scripts": {
+    "dev": "bun run serve.js",
+    "build": "bun run build.js",
+    "serve": "bun run serve.prod.js"
+  }
+}
