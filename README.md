@@ -7,10 +7,14 @@ A dark-themed, single-page browser app for viewing **JSONL conversation logs** �
 ## Features
 
 - **Paste & render** — paste JSONL anywhere in the left pane; renders instantly with a 120ms debounce
+- **Comments** — lines starting with `//` or `#` are ignored by the parser, so you can annotate your JSONL inline
 - **Tool call nesting** — tool results are nested under their matching tool calls (matched by `toolCallId`)
 - **Orphan results** — unmatched tool results render as standalone error rows
 - **Stats bar** — live counts: messages, tool calls, errors, parse errors
-- **Collapsible input pane** — fold the left pane for more reading room
+- **Collapsible input pane** — fold the left pane for full-width conversation reading
+- **History drawer** — auto-saves a draft as you type; manually save entries for later recall
+- **Keyboard shortcuts** — `Ctrl+S` saves to history, `Ctrl+Shift+H` toggles the history drawer
+- **Download** — one-click download of the current input as a `.jsonl` file
 - **Thinking blocks** — collapsible `<details>` sections for reasoning traces
 - **Usage footers** — token counts, cache reads, cost, and stop reason per assistant message
 - **Responsive** — stacks vertically on narrow viewports (<860px)
@@ -19,7 +23,9 @@ A dark-themed, single-page browser app for viewing **JSONL conversation logs** �
 
 ## JSONL Format
 
-Each line must be valid JSON with a `message` field:
+**Comments:** Lines starting with `//` or `#` are ignored — use them to annotate your traces inline.
+
+Each data line must be valid JSON with a `message` field:
 
 ```jsonl
 {"type":"message","id":"...","message":{"role":"user","content":[{"type":"text","text":"Hello"}]}}
@@ -47,6 +53,9 @@ bun run build
 
 # Serve production build locally
 bun run serve
+
+# Run tests
+bun test
 ```
 
 ## Docker
@@ -67,14 +76,18 @@ Multi-stage build: compiles in `oven/bun:1`, runs in `oven/bun:1-slim` (~80 MB f
 
 ```
 src/
-├── app.js              # Entry point — DOM wiring, event listeners, render pipeline
+├── app.js              # Entry point — DOM wiring, events, keybindings, render pipeline
+├── history.js          # History persistence — localStorage read/write, draft auto-save
 ├── index.html          # HTML shell (dev: loads modules, prod: inlined)
 ├── renderer.js         # All render functions (message rows, tool blocks, stats)
 ├── lib/
-│   ├── parser.js       # JSONL parser + SAMPLE data
+│   ├── parser.js       # JSONL parser (with comment support) + SAMPLE data
 │   └── utils.js        # escapeHtml, fmtTime, fmtMoney
-└── styles/
-    └── main.css        # All styles (CSS custom properties, dark theme)
+├── styles/
+│   └── main.css        # All styles (CSS custom properties, dark theme, responsive)
+└── __tests__/
+    ├── parser.test.js   # 10 tests — parsing, comments, errors, nested JSON
+    └── utils.test.js    # 15 tests — HTML escaping, time formatting, money formatting
 build.js                # Bun build — bundles + inlines → dist/index.html
 serve.js                # Dev server with live-reload
 serve.prod.js           # Production static server

@@ -25,6 +25,33 @@ const historyDrawer = document.getElementById('historyDrawer');
 const historyList = document.getElementById('historyList');
 const historyEmpty = document.getElementById('historyEmpty');
 const saveBtn = document.getElementById('saveBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+
+// ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
+function doSave() {
+  if (!input.value.trim()) return;
+  saveEntry(input.value);
+  refreshHistoryList();
+}
+
+function toggleHistory() {
+  const open = historyDrawer.classList.toggle('open');
+  historyToggle.classList.toggle('active', open);
+  if (open) refreshHistoryList();
+}
+
+function doDownload() {
+  if (!input.value.trim()) return;
+  const blob = new Blob([input.value], { type: 'application/jsonl' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `conversation-${new Date().toISOString().slice(0, 10)}.jsonl`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 // ---------------------------------------------------------------------------
 // Fold / expand input pane
@@ -101,17 +128,31 @@ function refreshHistoryList() {
 }
 
 // Toggle drawer
-historyToggle.addEventListener('click', () => {
-  const open = historyDrawer.classList.toggle('open');
-  historyToggle.classList.toggle('active', open);
-  if (open) refreshHistoryList();
-});
+historyToggle.addEventListener('click', toggleHistory);
 
 // Save current
-saveBtn.addEventListener('click', () => {
-  if (!input.value.trim()) return;
-  saveEntry(input.value);
-  refreshHistoryList();
+saveBtn.addEventListener('click', doSave);
+
+// Download
+downloadBtn.addEventListener('click', doDownload);
+
+// ---------------------------------------------------------------------------
+// Keyboard shortcuts
+// ---------------------------------------------------------------------------
+document.addEventListener('keydown', (e) => {
+  const mod = e.ctrlKey || e.metaKey;
+
+  // Ctrl+S / Cmd+S → save to history
+  if (mod && e.key === 's') {
+    e.preventDefault();
+    doSave();
+  }
+
+  // Ctrl+Shift+H / Cmd+Shift+H → toggle history drawer
+  if (mod && e.shiftKey && e.key === 'H') {
+    e.preventDefault();
+    toggleHistory();
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -124,6 +165,7 @@ clearBtn.addEventListener('click', () => {
   input.focus();
 });
 
+// ---------------------------------------------------------------------------
 // Bootstrap
 // ---------------------------------------------------------------------------
 // Restore draft if available, otherwise load sample

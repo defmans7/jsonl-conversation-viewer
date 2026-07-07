@@ -114,6 +114,21 @@ body{
   border-color:var(--user);
   color:var(--user);
 }
+.download-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  width:30px;
+  height:30px;
+  border-radius:6px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:border-color .15s, color .15s;
+}
+.download-btn:hover{border-color:var(--muted-dim);color:var(--text);}
 
 /* ---------- app body (history drawer + panes) ---------- */
 .app-body{

@@ -19,19 +19,23 @@ Zero dependencies, vanilla JS, built and served with Bun.
 | `bun run dev` | Start dev server on :3000 with live-reload |
 | `bun run build` | Production build → `dist/index.html` |
 | `bun run serve` | Serve production build on :3000 |
+| `bun test` | Run unit tests (Bun test runner) |
 | `docker build -t jsonl-viewer .` | Build Docker image |
 | `docker run -p 3000:3000 jsonl-viewer` | Run container |
 
 ## Architecture
 
 ```
-src/app.js          → DOM wiring, event listeners, debounced render trigger
+src/app.js          → DOM wiring, event listeners, keybindings, debounced render
+src/history.js      → localStorage persistence — draft auto-save, entry CRUD
 src/renderer.js     → render(), renderUserRow(), renderAssistantRow(),
                        renderToolBlock(), renderResultBody(), renderOrphanResult(),
                        buildStatsHtml()
 src/lib/parser.js   → parseJsonl(text) → [{ok,obj,lineNo}, ...], SAMPLE constant
+                       Skips // and # comment lines
 src/lib/utils.js    → escapeHtml(), fmtTime(), fmtMoney()
-src/styles/main.css → All CSS — dark theme, responsive layout, custom properties
+src/styles/main.css → All CSS — dark theme, responsive layout, history drawer
+src/__tests__/       → 25 tests (parser: 10, utils: 15) via Bun test runner
 ```
 
 ## Key Design Decisions
@@ -40,6 +44,9 @@ src/styles/main.css → All CSS — dark theme, responsive layout, custom proper
 - **Tool result nesting** — `toolResult` messages are matched to `toolCall` blocks by `toolCallId` and rendered inside the assistant bubble rather than as separate rows. Unmatched results render as orphan rows.
 - **Debounced render** — 120ms debounce on input so large pastes don't thrash the DOM.
 - **No state management** — the entire view is derived from the textarea value on each render. No mutable state to keep in sync.
+- **Comments** — `//` and `#` lines in the input are skipped by the parser, visible only in the textarea.
+- **History persistence** — auto-save draft to `localStorage` after 2s of inactivity. Manual save with auto-title extraction from the first user message.
+- **Keyboard shortcuts** — `Ctrl+S` saves to history, `Ctrl+Shift+H` toggles the history drawer.
 
 ## JSONL Contract
 

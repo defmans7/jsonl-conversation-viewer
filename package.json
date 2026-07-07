@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun run serve.js",
     "build": "bun run build.js",
-    "serve": "bun run serve.prod.js"
+    "serve": "bun run serve.prod.js",
+    "test": "bun test"
   }
 }

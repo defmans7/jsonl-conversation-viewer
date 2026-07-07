@@ -27,6 +27,6 @@ export function fmtTime(ts) {
  * Returns null for non-number inputs.
  */
 export function fmtMoney(n) {
-  if (typeof n !== 'number') return null;
+  if (typeof n !== 'number' || !Number.isFinite(n)) return null;
   return '$' + n.toFixed(6).replace(/0+$/, '').replace(/\.$/, '');
 }
