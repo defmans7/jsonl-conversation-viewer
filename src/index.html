@@ -21,7 +21,20 @@
   </div>
   <div class="stats" id="stats"></div>
   <button class="clear-btn" id="clearBtn">Clear</button>
+  <button class="history-toggle" id="historyToggle" title="History">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5V8l2.5 1.5"/></svg>
+  </button>
 </div>
+
+<div class="app-body">
+<aside class="history-drawer" id="historyDrawer">
+  <div class="history-header">
+    <span class="pane-label">History</span>
+    <button class="save-btn" id="saveBtn" title="Save current input">+ Save</button>
+  </div>
+  <ul class="history-list" id="historyList"></ul>
+  <div class="history-empty" id="historyEmpty">No saved entries yet.</div>
+</aside>
 
 <div class="panes">
   <div class="pane pane-input" id="inputPane">
@@ -33,6 +46,7 @@
   </div>
   <div class="pane pane-output" id="output"></div>
 </div>
+</div><!-- .app-body -->
 
 <!-- DEV: served as ES module by Bun -->
 <!-- BUILD: marker replaced with inlined <script> by build.js -->

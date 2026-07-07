@@ -1,5 +1,14 @@
 import { parseJsonl, SAMPLE } from './lib/parser.js';
+import { escapeHtml, fmtTime } from './lib/utils.js';
 import { render } from './renderer.js';
+import {
+  saveDraft,
+  loadDraft,
+  loadHistory,
+  saveEntry,
+  deleteEntry,
+  clearHistory,
+} from './history.js';
 
 // ---------------------------------------------------------------------------
 // DOM refs
@@ -10,6 +19,12 @@ const statsEl = document.getElementById('stats');
 const clearBtn = document.getElementById('clearBtn');
 const inputPane = document.getElementById('inputPane');
 const foldBtn = document.getElementById('foldBtn');
+
+const historyToggle = document.getElementById('historyToggle');
+const historyDrawer = document.getElementById('historyDrawer');
+const historyList = document.getElementById('historyList');
+const historyEmpty = document.getElementById('historyEmpty');
+const saveBtn = document.getElementById('saveBtn');
 
 // ---------------------------------------------------------------------------
 // Fold / expand input pane
@@ -34,6 +49,69 @@ function runRender() {
 input.addEventListener('input', () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(runRender, 120);
+
+  // Auto-save draft after 2s of inactivity
+  clearTimeout(input._draftTimer);
+  input._draftTimer = setTimeout(() => saveDraft(input.value), 2000);
+});
+
+// ---------------------------------------------------------------------------
+// History drawer
+// ---------------------------------------------------------------------------
+function refreshHistoryList() {
+  const entries = loadHistory();
+  historyList.innerHTML = '';
+
+  if (entries.length === 0) {
+    historyEmpty.style.display = 'block';
+    return;
+  }
+
+  historyEmpty.style.display = 'none';
+
+  for (const entry of entries) {
+    const li = document.createElement('li');
+    li.className = 'history-item';
+    li.innerHTML = `
+      <div class="history-item-body">
+        <div class="history-item-title">${escapeHtml(entry.title)}</div>
+        <div class="history-item-time">${fmtTime(entry.timestamp)}</div>
+      </div>
+      <button class="history-item-del" data-id="${entry.id}" title="Delete">×</button>
+    `;
+
+    // Click to load
+    li.addEventListener('click', (e) => {
+      if (e.target.closest('.history-item-del')) return;
+      input.value = entry.text;
+      runRender();
+    });
+
+    historyList.appendChild(li);
+  }
+
+  // Delegate delete clicks
+  historyList.querySelectorAll('.history-item-del').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteEntry(btn.dataset.id);
+      refreshHistoryList();
+    });
+  });
+}
+
+// Toggle drawer
+historyToggle.addEventListener('click', () => {
+  const open = historyDrawer.classList.toggle('open');
+  historyToggle.classList.toggle('active', open);
+  if (open) refreshHistoryList();
+});
+
+// Save current
+saveBtn.addEventListener('click', () => {
+  if (!input.value.trim()) return;
+  saveEntry(input.value);
+  refreshHistoryList();
 });
 
 // ---------------------------------------------------------------------------
@@ -42,11 +120,16 @@ input.addEventListener('input', () => {
 clearBtn.addEventListener('click', () => {
   input.value = '';
   runRender();
+  saveDraft('');
   input.focus();
 });
 
+// Bootstrap
 // ---------------------------------------------------------------------------
-// Bootstrap with sample data
-// ---------------------------------------------------------------------------
-input.value = SAMPLE;
+// Restore draft if available, otherwise load sample
+const draft = loadDraft();
+input.value = draft || SAMPLE;
 runRender();
+
+// Render initial history state
+refreshHistoryList();
