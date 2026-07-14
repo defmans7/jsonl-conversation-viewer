@@ -18,8 +18,6 @@ A dark-themed, single-page browser app for viewing **JSONL conversation logs** �
 - **Thinking blocks** — collapsible `<details>` sections for reasoning traces
 - **Usage footers** — token counts, cache reads, cost, and stop reason per assistant message
 - **Responsive** — stacks vertically on narrow viewports (<860px)
-- **Zero dependencies** — pure HTML, CSS, vanilla JS; no framework, no runtime deps
-- **Self-contained build** — production build is a single `index.html` with inlined CSS and JS
 
 ## JSONL Format
 
