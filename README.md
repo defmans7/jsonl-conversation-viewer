@@ -70,6 +70,17 @@ Open http://localhost:3000.
 
 Multi-stage build: compiles in `oven/bun:1`, runs in `oven/bun:1-slim` (~80 MB final image).
 
+## Deploy on Coolify
+
+1. In your Coolify dashboard, create a **New Service** and select your Git source (GitHub, GitLab, etc.)
+2. Point it to your fork or https://github.com/defmans7/jsonl-conversation-viewer
+3. Set the **Build Pack** to **Dockerfile** (Coolify auto-detects the Dockerfile at the repo root)
+4. Under **Domains**, add a domain or use a Coolify-generated URL
+5. Set the **Ports** mapping to `3000` (or leave the `PORT` environment variable default at 3000)
+6. Click **Deploy** — Coolify builds the Dockerfile and serves the app
+
+No environment variables are required. If you need to change the port, set `PORT` to your desired value.
+
 ## Project Structure
 
 ```
